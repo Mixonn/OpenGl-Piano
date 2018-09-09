@@ -47,6 +47,9 @@
     <ClInclude Include="Actions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Verticles.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Piano.rc">
@@ -60,6 +63,12 @@
       <Filter>Source Files</Filter>
     </None>
     <None Include="model.vs">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="cubeMap.fs">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="cubeMap.vs">
       <Filter>Source Files</Filter>
     </None>
   </ItemGroup>

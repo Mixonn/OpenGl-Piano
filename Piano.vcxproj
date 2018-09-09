@@ -131,11 +131,14 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="stb_image.h" />
+    <ClInclude Include="Verticles.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Piano.rc" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="cubeMap.fs" />
+    <None Include="cubeMap.vs" />
     <None Include="model.fs" />
     <None Include="model.vs" />
     <None Include="shader.fs" />
