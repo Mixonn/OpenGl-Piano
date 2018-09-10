@@ -383,6 +383,7 @@ int main()
 		//	glDrawArrays(GL_TRIANGLES, 0, 36);
 		//}
 
+
 		//DRAW PIANO
 		glm::mat4 base_pos = glm::mat4(1.0f);
 		base_pos = glm::translate(base_pos, glm::vec3(0.0f, -1.2f, 0.0f)); // translate it down so it's at the center of the scene
