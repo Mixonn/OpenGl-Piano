@@ -92,7 +92,7 @@ int main()
 	Shader lampShader("model.vs", "model.fs");
 	Shader skyboxShader("cubeMap.vs", "cubeMap.fs");
 
-	vector<std::string> faces
+	/*vector<std::string> faces
 	{
 		"textures/skymap/right.jpg",
 		"textures/skymap/left.jpg",
@@ -100,6 +100,16 @@ int main()
 		"textures/skymap/bottom.jpg",
 		"textures/skymap/front.jpg",
 		"textures/skymap/back.jpg"
+	};*/
+
+	vector<std::string> faces
+	{
+		"textures/skymap/purplenebulart.jpg",
+		"textures/skymap/purplenebulalf.jpg",
+		"textures/skymap/purplenebulaup.jpg",
+		"textures/skymap/purplenebuladn.jpg",
+		"textures/skymap/purplenebulaft.jpg",
+		"textures/skymap/purplenebulabk.jpg"
 	};
 
 
@@ -166,7 +176,7 @@ int main()
 	};
 
 	glm::vec3 pointLightPositions[] = {
-		glm::vec3(0.7f,  0.2f,  2.0f),
+		glm::vec3(999.7f,  999.2f,  999.0f),
 		glm::vec3(2.3f, -3.3f, -4.0f),
 		glm::vec3(-4.0f,  2.0f, -12.0f),
 		glm::vec3(0.0f,  0.0f, -3.0f)
@@ -257,6 +267,7 @@ int main()
 	unsigned int diffuseMap = loadTexture(((string)("textures/container2.png")).c_str());
 	unsigned int specularMap = loadTexture(((string)("textures/container2_specular.png")).c_str());
 
+
 	// shader configuration
 	// --------------------
 	lightingShader.use();
@@ -269,6 +280,9 @@ int main()
 	Model paper(((string)"obj/Piano2/paper.obj"));
 	Model piano_flap(((string)"obj/Piano2/flap.obj"));
 	Model stick(((string)"obj/Piano2/stick.obj"));
+
+	Model stage(((string)"obj/stage/stage2.obj"));
+	Model lamp(((string)"obj/stage/lamp.obj"));
 
 	skyboxShader.use();
 	skyboxShader.setInt("skybox", 0);
@@ -300,53 +314,22 @@ int main()
 		by using 'Uniform buffer objects', but that is something we'll discuss in the 'Advanced GLSL' tutorial.
 		*/
 		// directional light
-		lightingShader.setVec3("dirLight.direction", -0.2f, -1.0f, -0.3f);
+		lightingShader.setVec3("dirLight.direction", -2.3f, -3.0f, 5.3f);
 		lightingShader.setVec3("dirLight.ambient", 0.05f, 0.05f, 0.05f);
 		lightingShader.setVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
 		lightingShader.setVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
-		// point light 1
-		lightingShader.setVec3("pointLights[0].position", pointLightPositions[0]);
-		lightingShader.setVec3("pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
-		lightingShader.setVec3("pointLights[0].diffuse", 0.8f, 0.8f, 0.8f);
-		lightingShader.setVec3("pointLights[0].specular", 1.0f, 1.0f, 1.0f);
-		lightingShader.setFloat("pointLights[0].constant", 1.0f);
-		lightingShader.setFloat("pointLights[0].linear", 0.09);
-		lightingShader.setFloat("pointLights[0].quadratic", 0.032);
-		// point light 2
-		lightingShader.setVec3("pointLights[1].position", pointLightPositions[1]);
-		lightingShader.setVec3("pointLights[1].ambient", 0.05f, 0.05f, 0.05f);
-		lightingShader.setVec3("pointLights[1].diffuse", 0.8f, 0.8f, 0.8f);
-		lightingShader.setVec3("pointLights[1].specular", 1.0f, 1.0f, 1.0f);
-		lightingShader.setFloat("pointLights[1].constant", 1.0f);
-		lightingShader.setFloat("pointLights[1].linear", 0.09);
-		lightingShader.setFloat("pointLights[1].quadratic", 0.032);
-		// point light 3
-		lightingShader.setVec3("pointLights[2].position", pointLightPositions[2]);
-		lightingShader.setVec3("pointLights[2].ambient", 0.05f, 0.05f, 0.05f);
-		lightingShader.setVec3("pointLights[2].diffuse", 0.8f, 0.8f, 0.8f);
-		lightingShader.setVec3("pointLights[2].specular", 1.0f, 1.0f, 1.0f);
-		lightingShader.setFloat("pointLights[2].constant", 1.0f);
-		lightingShader.setFloat("pointLights[2].linear", 0.09);
-		lightingShader.setFloat("pointLights[2].quadratic", 0.032);
-		// point light 4
-		lightingShader.setVec3("pointLights[3].position", pointLightPositions[3]);
-		lightingShader.setVec3("pointLights[3].ambient", 0.05f, 0.05f, 0.05f);
-		lightingShader.setVec3("pointLights[3].diffuse", 0.8f, 0.8f, 0.8f);
-		lightingShader.setVec3("pointLights[3].specular", 1.0f, 1.0f, 1.0f);
-		lightingShader.setFloat("pointLights[3].constant", 1.0f);
-		lightingShader.setFloat("pointLights[3].linear", 0.09);
-		lightingShader.setFloat("pointLights[3].quadratic", 0.032);
+
 		// spotLight
-		lightingShader.setVec3("spotLight.position", camera.Position);
-		lightingShader.setVec3("spotLight.direction", camera.Front);
-		lightingShader.setVec3("spotLight.ambient", 0.0f, 0.0f, 0.0f);
-		lightingShader.setVec3("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
-		lightingShader.setVec3("spotLight.specular", 1.0f, 1.0f, 1.0f);
-		lightingShader.setFloat("spotLight.constant", 1.0f);
-		lightingShader.setFloat("spotLight.linear", 0.09);
-		lightingShader.setFloat("spotLight.quadratic", 0.032);
-		lightingShader.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
-		lightingShader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
+		lightingShader.setVec3("spotLight[0].position", camera.Position);
+		lightingShader.setVec3("spotLight[0].direction", camera.Front);
+		lightingShader.setVec3("spotLight[0].ambient", 0.2f, 0.2f, 0.2f);
+		lightingShader.setVec3("spotLight[0].diffuse", 0.7f, 0.7f, 0.7f);
+		lightingShader.setVec3("spotLight[0].specular", 0.2f, 0.2f, 0.2f);
+		lightingShader.setFloat("spotLight[0].constant", 1.0f);
+		lightingShader.setFloat("spotLight[0].linear", 0.09);
+		lightingShader.setFloat("spotLight[0].quadratic", 0.032);
+		lightingShader.setFloat("spotLight[0].cutOff", glm::cos(glm::radians(12.5f)));
+		lightingShader.setFloat("spotLight[0].outerCutOff", glm::cos(glm::radians(15.0f)));
 
 		// view/projection transformations
 		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
@@ -447,13 +430,42 @@ int main()
 		model = glm::scale(model, glm::vec3(0.85f, 0.7f, 0.7f));
 		lightingShader.setMat4("model", model);
 		stick.Draw(lightingShader);
-
-		//model = glm::scale(model, glm::vec3(0.8f, 0.8f, 0.8f));	// it's a bit too big for our scene, so scale it down
 		
+		//STAGE
+		model = glm::translate(base_pos, glm::vec3(0.0f, -1.476f, 0.0f));
+		//model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		//model = glm::rotate(model, glm::radians(actions.get_stick_angle()), glm::vec3(0.0f, 0.0f, 1.0f));
+		//model = glm::scale(model, glm::vec3(0.85f, 0.7f, 0.7f));
+		lightingShader.setMat4("model", model);
+		stage.Draw(lightingShader);
+		//LAMP
+		glDisable(GL_CULL_FACE);
+		for (int i = 0; i < 3; i++) {
+			model = glm::translate(base_pos, glm::vec3(-8.0f + 6.5f*i, 9.6f, 5.47f));
+			lightingShader.setMat4("model", model);
+			lamp.Draw(lightingShader);
 
-
-
-
+			string name = "spotLight[";
+			name.append(std::to_string(i+1));
+			name.append("].");
+			glm::vec3 position = glm::vec3(model[3][0], model[3][1], model[3][2]);
+			//std::cout << position.x << " " << position.y << " " << position.z << "\t " << camera.Position.x << " " << camera.Position.y << " " << camera.Position.z << std::endl;
+			glm::vec3 direction = glm::vec3(base_pos[3][0] - model[3][0], base_pos[3][1] - model[3][1], base_pos[3][2] - model[3][2]);
+			//glm::vec3 direction = glm::vec3(model[3][0] - base_pos[3][0] , model[3][1] - base_pos[3][1], model[3][2] - base_pos[3][2]);
+			direction = glm::normalize(direction);
+			//std::cout <<i<< " "<< direction.x << " " << direction.y << " " << direction.z << "\t " << camera.Front.x << " " << camera.Front.y << " " << camera.Front.z << std::endl;
+			lightingShader.setVec3(name + "position", position);
+			lightingShader.setVec3(name + "direction", direction);
+			lightingShader.setVec3(name + "ambient", 1.0f, 1.0f, 1.0f);
+			lightingShader.setVec3(name + "diffuse", 1.0f, 1.0f, 1.0f);
+			lightingShader.setVec3(name + "specular", 1.0f, 1.0f, 1.0f);
+			lightingShader.setFloat(name + "constant", 1.0f);
+			lightingShader.setFloat(name + "linear", 0.09);
+			lightingShader.setFloat(name + "quadratic", 0.032);
+			lightingShader.setFloat(name + "cutOff", glm::cos(glm::radians(12.5f)));
+			lightingShader.setFloat(name + "outerCutOff", glm::cos(glm::radians(15.0f)));
+		}
+		glEnable(GL_CULL_FACE);
 
 
 		lampShader.use();
@@ -512,18 +524,18 @@ void processInput(GLFWwindow *window)
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
 
-	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS)
 		camera.ProcessKeyboard(FORWARD, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 		camera.ProcessKeyboard(BACKWARD, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
 		camera.ProcessKeyboard(LEFT, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
 		camera.ProcessKeyboard(RIGHT, deltaTime);
-	/*if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
 		camera.ProcessKeyboard(SPACE, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
-		camera.ProcessKeyboard(LCTRL, deltaTime);*/
+	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+		camera.ProcessKeyboard(LCTRL, deltaTime);
 
 	if (glfwGetKey(window, GLFW_KEY_F1) == GLFW_PRESS) {
 		actions.ProcessKeyboard(PIANO_OPEN_FLOP, deltaTime);
