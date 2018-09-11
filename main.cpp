@@ -22,6 +22,7 @@ void processInput(GLFWwindow *window);
 unsigned int loadTexture(const char *path);
 unsigned int loadCubemap(vector<std::string> faces);
 void processInputPianoKeys(GLFWwindow *window, float deltaTime);
+void click_flashlight();
 
 // settings
 const unsigned int SCR_WIDTH = 800;
@@ -42,6 +43,9 @@ glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
 //Actions
 Actions actions(1.0f);
 Verticles ver(true);
+
+bool flashlight_on = true;
+bool flashlight_pressed = false;
 
 int main()
 {
@@ -182,6 +186,12 @@ int main()
 		glm::vec3(0.0f,  0.0f, -3.0f)
 	};
 
+	glm::vec3 lampColors[] = {
+		glm::vec3(0.8f, 0.0f, 0.0f),
+		glm::vec3(0.0f, 0.8f, 0.0f),
+		glm::vec3(0.0f, 0.0f, 0.8f),
+	};
+
 	float skyboxVertices[] = {
 		// positions          
 		-1.0f,  1.0f, -1.0f,
@@ -283,6 +293,8 @@ int main()
 
 	Model stage(((string)"obj/stage/stage2.obj"));
 	Model lamp(((string)"obj/stage/lamp.obj"));
+	Model lens(((string)"obj/stage/lens.obj"));
+
 
 	skyboxShader.use();
 	skyboxShader.setInt("skybox", 0);
@@ -298,6 +310,7 @@ int main()
 		lastFrame = currentFrame;
 
 		processInput(window);
+		actions.move_the_lamps(deltaTime);
 
 		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -320,11 +333,18 @@ int main()
 		lightingShader.setVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
 
 		// spotLight
+		if (flashlight_on) {
+			lightingShader.setVec3("spotLight[0].ambient", 0.2f, 0.2f, 0.2f);
+			lightingShader.setVec3("spotLight[0].diffuse", 0.7f, 0.7f, 0.7f);
+			lightingShader.setVec3("spotLight[0].specular", 0.2f, 0.2f, 0.2f);	
+		}
+		else {
+			lightingShader.setVec3("spotLight[0].ambient", 0.0f, 0.0f, 0.0f);
+			lightingShader.setVec3("spotLight[0].diffuse", 0.0f, 0.0f, 0.0f);
+			lightingShader.setVec3("spotLight[0].specular", 0.0f, 0.0f, 0.0f);
+		}
 		lightingShader.setVec3("spotLight[0].position", camera.Position);
 		lightingShader.setVec3("spotLight[0].direction", camera.Front);
-		lightingShader.setVec3("spotLight[0].ambient", 0.2f, 0.2f, 0.2f);
-		lightingShader.setVec3("spotLight[0].diffuse", 0.7f, 0.7f, 0.7f);
-		lightingShader.setVec3("spotLight[0].specular", 0.2f, 0.2f, 0.2f);
 		lightingShader.setFloat("spotLight[0].constant", 1.0f);
 		lightingShader.setFloat("spotLight[0].linear", 0.09);
 		lightingShader.setFloat("spotLight[0].quadratic", 0.032);
@@ -433,15 +453,18 @@ int main()
 		
 		//STAGE
 		model = glm::translate(base_pos, glm::vec3(0.0f, -1.476f, 0.0f));
-		//model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-		//model = glm::rotate(model, glm::radians(actions.get_stick_angle()), glm::vec3(0.0f, 0.0f, 1.0f));
-		//model = glm::scale(model, glm::vec3(0.85f, 0.7f, 0.7f));
 		lightingShader.setMat4("model", model);
 		stage.Draw(lightingShader);
 		//LAMP
 		glDisable(GL_CULL_FACE);
+		glm::mat4 lamp_pos[3];
 		for (int i = 0; i < 3; i++) {
+			glm::vec3 dir_move = actions.get_light_direction_move(i);
+
 			model = glm::translate(base_pos, glm::vec3(-8.0f + 6.5f*i, 9.6f, 5.47f));
+			lamp_pos[i] = model;
+			//ogarnij ruszanie sie lamp
+			//model = glm::rotate(model, glm::radians(actions.get_light_direction_angle(i)), glm::vec3(0.0f, 1.0f, 0.0f));
 			lightingShader.setMat4("model", model);
 			lamp.Draw(lightingShader);
 
@@ -449,16 +472,16 @@ int main()
 			name.append(std::to_string(i+1));
 			name.append("].");
 			glm::vec3 position = glm::vec3(model[3][0], model[3][1], model[3][2]);
-			//std::cout << position.x << " " << position.y << " " << position.z << "\t " << camera.Position.x << " " << camera.Position.y << " " << camera.Position.z << std::endl;
-			glm::vec3 direction = glm::vec3(base_pos[3][0] - model[3][0], base_pos[3][1] - model[3][1], base_pos[3][2] - model[3][2]);
-			//glm::vec3 direction = glm::vec3(model[3][0] - base_pos[3][0] , model[3][1] - base_pos[3][1], model[3][2] - base_pos[3][2]);
+			glm::vec3 direction = glm::vec3(
+				base_pos[3][0] - model[3][0] + dir_move.x,
+				base_pos[3][1] - model[3][1] + dir_move.y,
+				base_pos[3][2] - model[3][2] + dir_move.z);
 			direction = glm::normalize(direction);
-			//std::cout <<i<< " "<< direction.x << " " << direction.y << " " << direction.z << "\t " << camera.Front.x << " " << camera.Front.y << " " << camera.Front.z << std::endl;
 			lightingShader.setVec3(name + "position", position);
 			lightingShader.setVec3(name + "direction", direction);
-			lightingShader.setVec3(name + "ambient", 1.0f, 1.0f, 1.0f);
-			lightingShader.setVec3(name + "diffuse", 1.0f, 1.0f, 1.0f);
-			lightingShader.setVec3(name + "specular", 1.0f, 1.0f, 1.0f);
+			lightingShader.setVec3(name + "ambient", lampColors[i].x, lampColors[i].y, lampColors[i].z);
+			lightingShader.setVec3(name + "diffuse", lampColors[i].x, lampColors[i].y, lampColors[i].z);
+			lightingShader.setVec3(name + "specular", lampColors[i].x, lampColors[i].y, lampColors[i].z);
 			lightingShader.setFloat(name + "constant", 1.0f);
 			lightingShader.setFloat(name + "linear", 0.09);
 			lightingShader.setFloat(name + "quadratic", 0.032);
@@ -467,21 +490,20 @@ int main()
 		}
 		glEnable(GL_CULL_FACE);
 
-
+		//Lens
 		lampShader.use();
 		lampShader.setMat4("projection", projection);
 		lampShader.setMat4("view", view);
-
-		// we now draw as many light bulbs as we have point lights.
-		glBindVertexArray(lightVAO);
-		/*for (unsigned int i = 0; i < 4; i++)
+		//glBindVertexArray(lightVAO);
+		for (unsigned int i = 0; i < 3; i++)
 		{
-			model = glm::mat4(1.0f);
-			model = glm::translate(model, pointLightPositions[i]);
-			model = glm::scale(model, glm::vec3(0.2f)); // Make it a smaller cube
+			model = lamp_pos[i];
+			model = glm::translate(model, glm::vec3(0.0f, -0.08f, -0.64f));
+			model = glm::rotate(model, glm::radians(-129.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+			model = glm::scale(model, glm::vec3(0.37f));
 			lampShader.setMat4("model", model);
-			glDrawArrays(GL_TRIANGLES, 0, 36);
-		}*/
+			lens.Draw(lampShader);
+		}
 
 
 		// draw skybox as last
@@ -536,6 +558,14 @@ void processInput(GLFWwindow *window)
 		camera.ProcessKeyboard(SPACE, deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
 		camera.ProcessKeyboard(LCTRL, deltaTime);
+
+	int flashlight_key = GLFW_KEY_TAB;
+	if (glfwGetKey(window, flashlight_key) == GLFW_PRESS) {
+		click_flashlight();
+	}
+	if (glfwGetKey(window, flashlight_key) == GLFW_RELEASE) {
+		flashlight_pressed = false;
+	}
 
 	if (glfwGetKey(window, GLFW_KEY_F1) == GLFW_PRESS) {
 		actions.ProcessKeyboard(PIANO_OPEN_FLOP, deltaTime);
@@ -664,6 +694,12 @@ void processInputPianoKeys(GLFWwindow *window, float deltaTime) {
 	if (glfwGetKey(window, GLFW_KEY_SEMICOLON) == GLFW_RELEASE) {
 		actions.ProcessKeyboard(PIANO_RELEASE_KEY, deltaTime, 6, false);
 	}
+}
+
+void click_flashlight(){
+	if (flashlight_pressed) return;
+	flashlight_on = !flashlight_on;
+	flashlight_pressed = true;
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
