@@ -20,3 +20,4 @@ assimp-vc140-mt.dll
 *.sln
 *.vcxproj*
 .git/
+*.aps
