@@ -1,0 +1,53 @@
+# Blender MTL File: 'Pianodeck (2).blend'
+# Material Count: 4
+
+newmtl Black
+Ns 17.647059
+Ka 0.025000 0.025000 0.025000
+Kd 0.020379 0.020379 0.020379
+Ks 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 3
+map_Kd ../../textures/black.png
+map_Bump ../../textures/black2.png
+
+newmtl Gold
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.344212 0.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd ../../textures/gold.jpg
+map_Bump ../../textures/gold.jpg
+map_Ks ../../textures/gold.jpg
+
+newmtl Wood
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.314492 0.099942 0.035613
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd ../../textures/wood.jpg
+map_Bump ../../textures/wood.jpg
+map_Ks ../../textures/wood.jpg
+
+newmtl Wood_NONE
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.314492 0.099942 0.035613
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd ../../textures/wood.jpg
+map_Bump ../../textures/wood.jpg
+map_Ks ../../textures/wood.jpg

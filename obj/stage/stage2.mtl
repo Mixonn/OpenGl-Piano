@@ -1,0 +1,38 @@
+# Blender MTL File: 'None'
+# Material Count: 3
+
+newmtl Chrome
+Ns 92.156863
+Ka 1.000000 1.000000 1.000000
+Kd 0.147575 0.135218 0.135218
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd ../../textures/steel.jpg
+map_Bump ../../textures/steel.jpg
+
+newmtl floor
+Ns 92.156863
+Ka 1.000000 1.000000 1.000000
+Kd 0.060719 0.060719 0.060719
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd ../../textures/stagefloor.jpg
+map_Bump ../../textures/stagefloor.jpg
+
+newmtl footings
+Ns 92.156863
+Ka 1.000000 1.000000 1.000000
+Kd 0.009284 0.010728 0.002278
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd ../../textures/black.png
+map_Bump ../../textures/black.png

@@ -1,0 +1,38 @@
+# Blender MTL File: 'None'
+# Material Count: 3
+
+newmtl light_handle
+Ns 92.156863
+Ka 0.000000 0.000000 0.000000
+Kd 0.025243 0.023405 0.035218
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd ../../textures/steel.jpg
+map_Bump ../../textures/steel.jpg
+
+newmtl light_inside_bar
+Ns 92.156863
+Ka 0.000000 0.000000 0.000000
+Kd 0.477324 0.640000 0.188199
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd ../../textures/steel.jpg
+map_Bump ../../textures/steel.jpg
+
+newmtl light_pot
+Ns 92.156863
+Ka 0.000000 0.000000 0.000000
+Kd 0.003642 0.000553 0.000922
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd ../../textures/black.png
+map_Bump ../../textures/black.png
