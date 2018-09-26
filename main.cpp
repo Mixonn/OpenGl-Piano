@@ -1,6 +1,6 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-
+#include <irrklang/irrKlang.h>
 //#include "stb_image.h"
 
 #include <glm/glm.hpp>
@@ -50,7 +50,7 @@ bool flashlight_on = true;
 bool flashlight_pressed = false;
 
 std::map <std::string, Model*> modelMap;
-
+irrklang::ISoundEngine *engine = irrklang::createIrrKlangDevice();
 glm::vec3 lampColors[] = {
 		glm::vec3(0.8f, 0.0f, 0.0f),
 		glm::vec3(0.0f, 0.8f, 0.0f),
@@ -138,7 +138,7 @@ int main()
 	};
 
 	float skyboxVertices[] = {
-		// positions          
+		// positions
 		-1.0f,  1.0f, -1.0f,
 		-1.0f, -1.0f, -1.0f,
 		1.0f, -1.0f, -1.0f,
@@ -522,6 +522,7 @@ void processInputPianoKeys(GLFWwindow *window, float deltaTime) {
 	//WHITE
 	if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS) {
 		actions.ProcessKeyboard(PIANO_PUSH_KEY, deltaTime, 0, true);
+        engine->play2D("Music/A0.mp3", false);
 	}
 	if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_RELEASE) {
 		actions.ProcessKeyboard(PIANO_RELEASE_KEY, deltaTime, 0, true);
@@ -529,6 +530,7 @@ void processInputPianoKeys(GLFWwindow *window, float deltaTime) {
 
 	if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS) {
 		actions.ProcessKeyboard(PIANO_PUSH_KEY, deltaTime, 1, true);
+		engine->play2D("Music/B1.mp3", false);
 	}
 	if (glfwGetKey(window, GLFW_KEY_X) == GLFW_RELEASE) {
 		actions.ProcessKeyboard(PIANO_RELEASE_KEY, deltaTime, 1, true);
@@ -536,6 +538,7 @@ void processInputPianoKeys(GLFWwindow *window, float deltaTime) {
 
 	if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS) {
 		actions.ProcessKeyboard(PIANO_PUSH_KEY, deltaTime, 2, true);
+		engine->play2D("Music/C1.mp3", false);
 	}
 	if (glfwGetKey(window, GLFW_KEY_C) == GLFW_RELEASE) {
 		actions.ProcessKeyboard(PIANO_RELEASE_KEY, deltaTime, 2, true);
@@ -543,6 +546,7 @@ void processInputPianoKeys(GLFWwindow *window, float deltaTime) {
 
 	if (glfwGetKey(window, GLFW_KEY_V) == GLFW_PRESS) {
 		actions.ProcessKeyboard(PIANO_PUSH_KEY, deltaTime, 3, true);
+		engine->play2D("Music/D1.mp3", false);
 	}
 	if (glfwGetKey(window, GLFW_KEY_V) == GLFW_RELEASE) {
 		actions.ProcessKeyboard(PIANO_RELEASE_KEY, deltaTime, 3, true);
@@ -550,6 +554,7 @@ void processInputPianoKeys(GLFWwindow *window, float deltaTime) {
 
 	if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS) {
 		actions.ProcessKeyboard(PIANO_PUSH_KEY, deltaTime, 4, true);
+		engine->play2D("Music/E1.mp3", false);
 	}
 	if (glfwGetKey(window, GLFW_KEY_B) == GLFW_RELEASE) {
 		actions.ProcessKeyboard(PIANO_RELEASE_KEY, deltaTime, 4, true);
@@ -557,6 +562,7 @@ void processInputPianoKeys(GLFWwindow *window, float deltaTime) {
 
 	if (glfwGetKey(window, GLFW_KEY_N) == GLFW_PRESS) {
 		actions.ProcessKeyboard(PIANO_PUSH_KEY, deltaTime, 5, true);
+		engine->play2D("Music/F1.mp3", false);
 	}
 	if (glfwGetKey(window, GLFW_KEY_N) == GLFW_RELEASE) {
 		actions.ProcessKeyboard(PIANO_RELEASE_KEY, deltaTime, 5, true);
@@ -564,6 +570,7 @@ void processInputPianoKeys(GLFWwindow *window, float deltaTime) {
 
 	if (glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS) {
 		actions.ProcessKeyboard(PIANO_PUSH_KEY, deltaTime, 6, true);
+		engine->play2D("Music/G1.mp3", false);
 	}
 	if (glfwGetKey(window, GLFW_KEY_M) == GLFW_RELEASE) {
 		actions.ProcessKeyboard(PIANO_RELEASE_KEY, deltaTime, 6, true);
@@ -571,6 +578,7 @@ void processInputPianoKeys(GLFWwindow *window, float deltaTime) {
 
 	if (glfwGetKey(window, GLFW_KEY_COMMA) == GLFW_PRESS) {
 		actions.ProcessKeyboard(PIANO_PUSH_KEY, deltaTime, 7, true);
+		engine->play2D("Music/A1.mp3", false);
 	}
 	if (glfwGetKey(window, GLFW_KEY_COMMA) == GLFW_RELEASE) {
 		actions.ProcessKeyboard(PIANO_RELEASE_KEY, deltaTime, 7, true);
@@ -578,6 +586,7 @@ void processInputPianoKeys(GLFWwindow *window, float deltaTime) {
 
 	if (glfwGetKey(window, GLFW_KEY_PERIOD) == GLFW_PRESS) {
 		actions.ProcessKeyboard(PIANO_PUSH_KEY, deltaTime, 8, true);
+		engine->play2D("Music/B1.mp3", false);
 	}
 	if (glfwGetKey(window, GLFW_KEY_PERIOD) == GLFW_RELEASE) {
 		actions.ProcessKeyboard(PIANO_RELEASE_KEY, deltaTime, 8, true);
@@ -585,6 +594,7 @@ void processInputPianoKeys(GLFWwindow *window, float deltaTime) {
 
 	if (glfwGetKey(window, GLFW_KEY_SLASH) == GLFW_PRESS) {
 		actions.ProcessKeyboard(PIANO_PUSH_KEY, deltaTime, 9, true);
+		engine->play2D("Music/C2.mp3", false);
 	}
 	if (glfwGetKey(window, GLFW_KEY_SLASH) == GLFW_RELEASE) {
 		actions.ProcessKeyboard(PIANO_RELEASE_KEY, deltaTime, 9, true);
@@ -595,42 +605,49 @@ void processInputPianoKeys(GLFWwindow *window, float deltaTime) {
 	//BLACK
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
 		actions.ProcessKeyboard(PIANO_PUSH_KEY, deltaTime, 0, false);
+		engine->play2D("Music/Bb1.mp3", false);
 	}
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_RELEASE) {
 		actions.ProcessKeyboard(PIANO_RELEASE_KEY, deltaTime, 0, false);
 	}
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
 		actions.ProcessKeyboard(PIANO_PUSH_KEY, deltaTime, 1, false);
+		engine->play2D("Music/Db1.mp3", false);
 	}
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_RELEASE) {
 		actions.ProcessKeyboard(PIANO_RELEASE_KEY, deltaTime, 1, false);
 	}
 	if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS) {
 		actions.ProcessKeyboard(PIANO_PUSH_KEY, deltaTime, 2, false);
+		engine->play2D("Music/Eb1.mp3", false);
 	}
 	if (glfwGetKey(window, GLFW_KEY_G) == GLFW_RELEASE) {
 		actions.ProcessKeyboard(PIANO_RELEASE_KEY, deltaTime, 2, false);
 	}
 	if (glfwGetKey(window, GLFW_KEY_H) == GLFW_PRESS) {
 		actions.ProcessKeyboard(PIANO_PUSH_KEY, deltaTime, 3, false);
+		engine->play2D("Music/Gb1.mp3", false);
 	}
 	if (glfwGetKey(window, GLFW_KEY_H) == GLFW_RELEASE) {
 		actions.ProcessKeyboard(PIANO_RELEASE_KEY, deltaTime, 3, false);
 	}
 	if (glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS) {
 		actions.ProcessKeyboard(PIANO_PUSH_KEY, deltaTime, 4, false);
+		engine->play2D("Music/Ab1.mp3", false);
 	}
 	if (glfwGetKey(window, GLFW_KEY_J) == GLFW_RELEASE) {
 		actions.ProcessKeyboard(PIANO_RELEASE_KEY, deltaTime, 4, false);
 	}
 	if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) {
 		actions.ProcessKeyboard(PIANO_PUSH_KEY, deltaTime, 5, false);
+		engine->play2D("Music/Bb2.mp3", false);
 	}
 	if (glfwGetKey(window, GLFW_KEY_L) == GLFW_RELEASE) {
 		actions.ProcessKeyboard(PIANO_RELEASE_KEY, deltaTime, 5, false);
 	}
 	if (glfwGetKey(window, GLFW_KEY_SEMICOLON) == GLFW_PRESS) {
 		actions.ProcessKeyboard(PIANO_PUSH_KEY, deltaTime, 6, false);
+		engine->play2D("Music/2pac.mp3", false);
 	}
 	if (glfwGetKey(window, GLFW_KEY_SEMICOLON) == GLFW_RELEASE) {
 		actions.ProcessKeyboard(PIANO_RELEASE_KEY, deltaTime, 6, false);
@@ -647,7 +664,7 @@ void click_flashlight() {
 // ---------------------------------------------------------------------------------------------
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
-	// make sure the viewport matches the new window dimensions; note that width and 
+	// make sure the viewport matches the new window dimensions; note that width and
 	// height will be significantly larger than specified on retina displays.
 	glViewport(0, 0, width, height);
 }
