@@ -647,7 +647,7 @@ void processInputPianoKeys(GLFWwindow *window, float deltaTime) {
 	}
 	if (glfwGetKey(window, GLFW_KEY_SEMICOLON) == GLFW_PRESS) {
 		actions.ProcessKeyboard(PIANO_PUSH_KEY, deltaTime, 6, false);
-		engine->play2D("Music/2pac.mp3", false);
+		engine->play2D("Music/panda3.wav", false);
 	}
 	if (glfwGetKey(window, GLFW_KEY_SEMICOLON) == GLFW_RELEASE) {
 		actions.ProcessKeyboard(PIANO_RELEASE_KEY, deltaTime, 6, false);
