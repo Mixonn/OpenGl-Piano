@@ -13,6 +13,8 @@
 #include "Actions.h"
 
 #include <iostream>
+#include <map>
+
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -22,6 +24,8 @@ unsigned int loadTexture(const char *path);
 unsigned int loadCubemap(vector<std::string> faces);
 void processInputPianoKeys(GLFWwindow *window, float deltaTime);
 void click_flashlight();
+void renderScene(const Shader &shader, const glm::mat4 base_pos);
+void renderLamps(const Shader &lightingShader, Shader &lampShader, const glm::mat4 projection, const glm::mat4 view, const glm::mat4 base_pos);
 
 // settings
 const unsigned int SCR_WIDTH = 800;
@@ -44,6 +48,14 @@ Actions actions(1.0f);
 
 bool flashlight_on = true;
 bool flashlight_pressed = false;
+
+std::map <std::string, Model*> modelMap;
+
+glm::vec3 lampColors[] = {
+		glm::vec3(0.8f, 0.0f, 0.0f),
+		glm::vec3(0.0f, 0.8f, 0.0f),
+		glm::vec3(0.0f, 0.0f, 0.8f),
+};
 
 int main()
 {
@@ -201,6 +213,7 @@ int main()
 	lightingShader.setInt("material.diffuse", 0);
 	lightingShader.setInt("material.specular", 1);
 
+	/*
 	Model piano(((string)"obj/Piano2/Pianotex.obj"));
 	Model key_white(((string)"obj/Piano2/white.obj"));
 	Model key_black(((string)"obj/Piano2/black.obj"));
@@ -210,7 +223,18 @@ int main()
 
 	Model stage(((string)"obj/stage/stage2.obj"));
 	Model lamp(((string)"obj/stage/lamp.obj"));
-	Model lens(((string)"obj/stage/lens.obj"));
+	Model lens(((string)"obj/stage/lens.obj"));*/
+
+	modelMap.insert(std::make_pair("piano", new Model((string)"obj/Piano2/Pianotex.obj")));
+	modelMap.insert(std::make_pair("key_white", new Model((string)"obj/Piano2/white.obj")));
+	modelMap.insert(std::make_pair("key_black", new Model((string)"obj/Piano2/black.obj")));
+	modelMap.insert(std::make_pair("paper", new Model((string)"obj/Piano2/paper.obj")));
+	modelMap.insert(std::make_pair("piano_flap", new Model((string)"obj/Piano2/flap.obj")));
+	modelMap.insert(std::make_pair("stick", new Model((string)"obj/Piano2/stick.obj")));
+
+	modelMap.insert(std::make_pair("stage", new Model((string)"obj/stage/stage2.obj")));
+	modelMap.insert(std::make_pair("lamp", new Model((string)"obj/stage/lamp.obj")));
+	modelMap.insert(std::make_pair("lens", new Model((string)"obj/stage/lens.obj")));
 
 
 	skyboxShader.use();
@@ -253,7 +277,7 @@ int main()
 		if (flashlight_on) {
 			lightingShader.setVec3("spotLight[0].ambient", 0.2f, 0.2f, 0.2f);
 			lightingShader.setVec3("spotLight[0].diffuse", 0.7f, 0.7f, 0.7f);
-			lightingShader.setVec3("spotLight[0].specular", 0.2f, 0.2f, 0.2f);	
+			lightingShader.setVec3("spotLight[0].specular", 0.2f, 0.2f, 0.2f);
 		}
 		else {
 			lightingShader.setVec3("spotLight[0].ambient", 0.0f, 0.0f, 0.0f);
@@ -285,143 +309,12 @@ int main()
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, specularMap);
 
-		// render the cube
-		// glBindVertexArray(cubeVAO);
-		// glDrawArrays(GL_TRIANGLES, 0, 36);*/
-
-		// render containers
-		//glBindVertexArray(cubeVAO);
-		//for (unsigned int i = 0; i < 10; i++)
-		//{
-			// calculate the model matrix for each object and pass it to shader before drawing
-		//	glm::mat4 model = glm::mat4(1.0f);
-		//	model = glm::translate(model, cubePositions[i]);
-		//	float angle = 20.0f * i;
-		//	model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-		//	lightingShader.setMat4("model", model);
-
-		//	glDrawArrays(GL_TRIANGLES, 0, 36);
-		//}
-
-
-		//DRAW PIANO
 		glm::mat4 base_pos = glm::mat4(1.0f);
 		base_pos = glm::translate(base_pos, glm::vec3(0.0f, -1.2f, 0.0f)); // translate it down so it's at the center of the scene
-		model = glm::scale(base_pos, glm::vec3(0.8f, 0.8f, 0.8f));	// it's a bit too big for our scene, so scale it down
-		lightingShader.setMat4("model", model);
-		lightingShader.setFloat("material.shininess", 128.0f);
-		piano.Draw(lightingShader);
-		//DRAW KEYS
-		glm::mat4 keys_pos = base_pos;
-		keys_pos = glm::translate(keys_pos, glm::vec3(-0.72f, 0.66f, 0.75f));
-		//whites
-		glm::mat4 key_scale = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
-		for (unsigned int i = 0; i < 36; i++) {
-			glm::mat4 key = keys_pos;
-			key = glm::translate(key, glm::vec3(0.042f * i, 0.0f, 0.0f));
-			key = glm::rotate(key, glm::radians(actions.get_piano_key_angle(i, true)), glm::vec3(1.0f, 0.0f, 0.0f));
-			key = key_scale * key;
-			lightingShader.setMat4("model", key);
-			key_white.Draw(lightingShader);
-		}
-		//black
-		key_scale = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
-		glm::mat4 keys_pos_black = glm::translate(keys_pos, glm::vec3(0.02f, 0.0f, 0.0f));
-		bool add_four = true;
-		unsigned int when_blank = 2;
-		unsigned int black_key_number = 0;
-		for (unsigned int i = 0; i < 35; i++) {
-			if (i == when_blank) {
-				if (add_four) when_blank += 4;
-				else when_blank += 3;
-				add_four = !add_four;
-				continue;
-			}
-			glm::mat4 key = keys_pos_black;
-			key = glm::translate(key, glm::vec3(0.042f * i, 0.0f, 0.0f));
-			key = glm::rotate(key, glm::radians(actions.get_piano_key_angle(black_key_number, false)), glm::vec3(1.0f, 0.0f, 0.0f));
-			key = key_scale * key;
-			lightingShader.setMat4("model", key);
-			key_black.Draw(lightingShader);
-			black_key_number++;
-		}
-		//PAPER
-		model = base_pos;
-		model = glm::translate(model, glm::vec3(0.00f, 1.02f, 0.64f));
-		model = glm::rotate(model, glm::radians(81.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		model = glm::scale(model, glm::vec3(0.18f, 0.01f, 0.16f));
-		lightingShader.setMat4("model", model);
-		paper.Draw(lightingShader);
-		//FLAP
-		model = base_pos;
-		model = glm::translate(model, glm::vec3(-0.786f, 0.91f, -0.928f));
-		model = glm::rotate(model, glm::radians(actions.get_flop_angle()), glm::vec3(0.0f, 0.0f, 1.0f));
-		model = glm::scale(model, glm::vec3(0.86f, 0.825f, 0.870f));
-		lightingShader.setMat4("model", model);
-		piano_flap.Draw(lightingShader);
-		//STICK
-		model = base_pos;
-		model = glm::translate(model, glm::vec3(0.77f, 0.89f, 0.52f));
-		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-		model = glm::rotate(model, glm::radians(actions.get_stick_angle()), glm::vec3(0.0f, 0.0f, 1.0f));
-		model = glm::scale(model, glm::vec3(0.85f, 0.7f, 0.7f));
-		lightingShader.setMat4("model", model);
-		stick.Draw(lightingShader);
-		
-		//STAGE
-		model = glm::translate(base_pos, glm::vec3(0.0f, -1.476f, 0.0f));
-		lightingShader.setMat4("model", model);
-		stage.Draw(lightingShader);
-		//LAMP
-		glDisable(GL_CULL_FACE);
-		glm::mat4 lamp_pos[3];
-		for (int i = 0; i < 3; i++) {
-			glm::vec3 dir_move = actions.get_light_direction_move(i);
 
-			model = glm::translate(base_pos, glm::vec3(-8.0f + 6.5f*i, 9.6f, 5.47f));
-			lamp_pos[i] = model;
-			//ogarnij ruszanie sie lamp
-			//model = glm::rotate(model, glm::radians(actions.get_light_direction_angle(i)), glm::vec3(0.0f, 1.0f, 0.0f));
-			lightingShader.setMat4("model", model);
-			lamp.Draw(lightingShader);
+		renderScene(lightingShader, base_pos);
 
-			string name = "spotLight[";
-			name.append(std::to_string(i+1));
-			name.append("].");
-			glm::vec3 position = glm::vec3(model[3][0], model[3][1], model[3][2]);
-			glm::vec3 direction = glm::vec3(
-				base_pos[3][0] - model[3][0] + dir_move.x,
-				base_pos[3][1] - model[3][1] + dir_move.y,
-				base_pos[3][2] - model[3][2] + dir_move.z);
-			direction = glm::normalize(direction);
-			lightingShader.setVec3(name + "position", position);
-			lightingShader.setVec3(name + "direction", direction);
-			lightingShader.setVec3(name + "ambient", lampColors[i].x, lampColors[i].y, lampColors[i].z);
-			lightingShader.setVec3(name + "diffuse", lampColors[i].x, lampColors[i].y, lampColors[i].z);
-			lightingShader.setVec3(name + "specular", lampColors[i].x, lampColors[i].y, lampColors[i].z);
-			lightingShader.setFloat(name + "constant", 1.0f);
-			lightingShader.setFloat(name + "linear", 0.09);
-			lightingShader.setFloat(name + "quadratic", 0.032);
-			lightingShader.setFloat(name + "cutOff", glm::cos(glm::radians(12.5f)));
-			lightingShader.setFloat(name + "outerCutOff", glm::cos(glm::radians(15.0f)));
-		}
-		glEnable(GL_CULL_FACE);
-
-		//Lens
-		lampShader.use();
-		lampShader.setMat4("projection", projection);
-		lampShader.setMat4("view", view);
-		//glBindVertexArray(lightVAO);
-		for (unsigned int i = 0; i < 3; i++)
-		{
-			model = lamp_pos[i];
-			model = glm::translate(model, glm::vec3(0.0f, -0.08f, -0.64f));
-			model = glm::rotate(model, glm::radians(-129.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-			model = glm::scale(model, glm::vec3(0.37f));
-			lampShader.setMat4("model", model);
-			lens.Draw(lampShader);
-		}
-
+		renderLamps(lightingShader, lampShader, projection, view, base_pos);
 
 		// draw skybox as last
 		glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
@@ -453,6 +346,139 @@ int main()
 	glfwTerminate();
 	return 0;
 }
+
+
+void renderScene(const Shader &shader, const glm::mat4 base_pos) {
+	//DRAW PIANO
+	glm::mat4 model = glm::scale(base_pos, glm::vec3(0.8f, 0.8f, 0.8f));	// it's a bit too big for our scene, so scale it down
+	shader.setMat4("model", model);
+	shader.setFloat("material.shininess", 128.0f);
+	Model* piano = modelMap.at("piano");
+	piano->Draw(shader);
+	//DRAW KEYS
+	glm::mat4 keys_pos = base_pos;
+	keys_pos = glm::translate(keys_pos, glm::vec3(-0.72f, 0.66f, 0.75f));
+	//whites
+	glm::mat4 key_scale = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+	Model* key_white = modelMap.at("key_white");
+	for (unsigned int i = 0; i < 36; i++) {
+		glm::mat4 key = keys_pos;
+		key = glm::translate(key, glm::vec3(0.042f * i, 0.0f, 0.0f));
+		key = glm::rotate(key, glm::radians(actions.get_piano_key_angle(i, true)), glm::vec3(1.0f, 0.0f, 0.0f));
+		key = key_scale * key;
+		shader.setMat4("model", key);
+		key_white->Draw(shader);
+	}
+	//black
+	Model* key_black = modelMap.at("key_black");
+	key_scale = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+	glm::mat4 keys_pos_black = glm::translate(keys_pos, glm::vec3(0.02f, 0.0f, 0.0f));
+	bool add_four = true;
+	unsigned int when_blank = 2;
+	unsigned int black_key_number = 0;
+	for (unsigned int i = 0; i < 35; i++) {
+		if (i == when_blank) {
+			if (add_four) when_blank += 4;
+			else when_blank += 3;
+			add_four = !add_four;
+			continue;
+		}
+		glm::mat4 key = keys_pos_black;
+		key = glm::translate(key, glm::vec3(0.042f * i, 0.0f, 0.0f));
+		key = glm::rotate(key, glm::radians(actions.get_piano_key_angle(black_key_number, false)), glm::vec3(1.0f, 0.0f, 0.0f));
+		key = key_scale * key;
+		shader.setMat4("model", key);
+		key_black->Draw(shader);
+		black_key_number++;
+	}
+	//PAPER
+	Model* paper = modelMap.at("paper");
+	model = base_pos;
+	model = glm::translate(model, glm::vec3(0.00f, 1.02f, 0.64f));
+	model = glm::rotate(model, glm::radians(81.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+	model = glm::scale(model, glm::vec3(0.18f, 0.01f, 0.16f));
+	shader.setMat4("model", model);
+	paper->Draw(shader);
+	//FLAP
+	Model* piano_flap = modelMap.at("piano_flap");
+	model = base_pos;
+	model = glm::translate(model, glm::vec3(-0.786f, 0.91f, -0.928f));
+	model = glm::rotate(model, glm::radians(actions.get_flop_angle()), glm::vec3(0.0f, 0.0f, 1.0f));
+	model = glm::scale(model, glm::vec3(0.86f, 0.825f, 0.870f));
+	shader.setMat4("model", model);
+	piano_flap->Draw(shader);
+	//STICK
+	Model* stick = modelMap.at("stick");
+	model = base_pos;
+	model = glm::translate(model, glm::vec3(0.77f, 0.89f, 0.52f));
+	model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	model = glm::rotate(model, glm::radians(actions.get_stick_angle()), glm::vec3(0.0f, 0.0f, 1.0f));
+	model = glm::scale(model, glm::vec3(0.85f, 0.7f, 0.7f));
+	shader.setMat4("model", model);
+	stick->Draw(shader);
+
+	//STAGE
+	Model* stage = modelMap.at("stage");
+	model = glm::translate(base_pos, glm::vec3(0.0f, -1.476f, 0.0f));
+	shader.setMat4("model", model);
+	stage->Draw(shader);
+}
+
+void renderLamps(const Shader &lightingShader, Shader &lampShader, const glm::mat4 projection, const glm::mat4 view, const glm::mat4 base_pos) {
+	//LAMP
+	glDisable(GL_CULL_FACE);
+	glm::mat4 lamp_pos[3];
+	Model* lamp = modelMap.at("lamp");
+	for (int i = 0; i < 3; i++) {
+		glm::vec3 dir_move = actions.get_light_direction_move(i);
+
+		glm::mat4 model = glm::translate(base_pos, glm::vec3(-8.0f + 6.5f*i, 9.6f, 5.47f));
+		lamp_pos[i] = model;
+		//ogarnij ruszanie sie lamp
+		//model = glm::rotate(model, glm::radians(actions.get_light_direction_angle(i)), glm::vec3(0.0f, 1.0f, 0.0f));
+		lightingShader.setMat4("model", model);
+
+		lamp->Draw(lightingShader);
+
+		string name = "spotLight[";
+		name.append(std::to_string(i + 1));
+		name.append("].");
+		glm::vec3 position = glm::vec3(model[3][0], model[3][1], model[3][2]);
+		glm::vec3 direction = glm::vec3(
+			base_pos[3][0] - model[3][0] + dir_move.x,
+			base_pos[3][1] - model[3][1] + dir_move.y,
+			base_pos[3][2] - model[3][2] + dir_move.z);
+		direction = glm::normalize(direction);
+		lightingShader.setVec3(name + "position", position);
+		lightingShader.setVec3(name + "direction", direction);
+		lightingShader.setVec3(name + "ambient", lampColors[i].x, lampColors[i].y, lampColors[i].z);
+		lightingShader.setVec3(name + "diffuse", lampColors[i].x, lampColors[i].y, lampColors[i].z);
+		lightingShader.setVec3(name + "specular", lampColors[i].x, lampColors[i].y, lampColors[i].z);
+		lightingShader.setFloat(name + "constant", 1.0f);
+		lightingShader.setFloat(name + "linear", 0.09);
+		lightingShader.setFloat(name + "quadratic", 0.032);
+		lightingShader.setFloat(name + "cutOff", glm::cos(glm::radians(12.5f)));
+		lightingShader.setFloat(name + "outerCutOff", glm::cos(glm::radians(15.0f)));
+	}
+	glEnable(GL_CULL_FACE);
+	//Lens
+	Model* lens = modelMap.at("lens");
+	lampShader.use();
+	lampShader.setMat4("projection", projection);
+	lampShader.setMat4("view", view);
+	//glBindVertexArray(lightVAO);
+	for (unsigned int i = 0; i < 3; i++)
+	{
+		glm::mat4 model = lamp_pos[i];
+		model = glm::translate(model, glm::vec3(0.0f, -0.08f, -0.64f));
+		model = glm::rotate(model, glm::radians(-129.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(0.37f));
+		lampShader.setMat4("model", model);
+		lens->Draw(lampShader);
+	}
+}
+
+
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 // ---------------------------------------------------------------------------------------------------------
@@ -611,7 +637,7 @@ void processInputPianoKeys(GLFWwindow *window, float deltaTime) {
 	}
 }
 
-void click_flashlight(){
+void click_flashlight() {
 	if (flashlight_pressed) return;
 	flashlight_on = !flashlight_on;
 	flashlight_pressed = true;
